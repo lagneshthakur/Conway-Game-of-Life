@@ -1,8 +1,21 @@
+$(document).on('click', 'td', function() { 
+	if(this.innerHTML == '0'){
+		this.setAttribute("class", "alive");
+		this.innerHTML = 1;
+	}
+	else{
+		this.setAttribute("class", "dead");
+		this.innerHTML = 0;
+	}
+});
+
+
 function initialize(form)
 		{	
 			var rows = Number(form.Rows.value);
 			var columns = Number(form.Columns.value);
 			var gametable = document.getElementById("gametable");
+			gametable.innerHTML= "";
 			var table = document.createElement("TABLE");
     		table.setAttribute("id", "myTable");
     		gametable.appendChild(table);
@@ -19,19 +32,33 @@ function initialize(form)
 			}
 		}
 
-		function seed(seedValue)
-		{
-			seedArray = seedValue[0].value;
-			seedJSON = JSON.parse(seedArray);
-			for(var i=0; i<seedJSON.length; i++){
-				for(row in seedJSON[i]){
-				column = seedJSON[i][row];
-				var markedRow = document.getElementsByTagName("tr")[Number(row)-1];
-				markedRow.children[Number(column)-1].innerHTML = "1";
-				markedRow.children[Number(column)-1].setAttribute("class", "alive");
-				}	
-			}
+		// No need of seed function after addind Jquery
+		// function seed(seedValue)
+		// {
+		// 	seedArray = seedValue[0].value;
+		// 	seedJSON = JSON.parse(seedArray);
+		// 	for(var i=0; i<seedJSON.length; i++){
+		// 		for(row in seedJSON[i]){
+		// 		column = seedJSON[i][row];
+		// 		var markedRow = document.getElementsByTagName("tr")[Number(row)-1];
+		// 		markedRow.children[Number(column)-1].innerHTML = "1";
+		// 		markedRow.children[Number(column)-1].setAttribute("class", "alive");
+		// 		}	
+		// 	}
 			
+		// }
+		var intervalHandle=null;
+
+		function iterate_infinite(){
+			    intervalHandle = setInterval(function(){ iterate(); }, 1000);
+		}
+
+		function iterate_infinite_fast(){
+		    intervalHandle = setInterval(function(){ iterate(); }, 400);
+		}
+
+		function stop_iteration(){
+			clearInterval(intervalHandle);
 		}
 
 		function iterate()

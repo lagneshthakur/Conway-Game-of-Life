@@ -2,28 +2,33 @@
 <html>
 <head>
 	<title>Conway's Game of Life</title>
+	<script type="text/javascript" src="js/jquery-3.0.0.min.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
 
 <body>
-	<div>
-		<h1>Conway's Game of Life - 0 is dead and 1 is alive</h1>
+	<div class="head">
+		<p>Conway's Game of Life - 0 is dead and 1 is alive</p>
 	</div>
-	<div>
+	<div class="form">
 		<form id="Initialization">
-			<label>Rows : </label><input type="text" name="Rows" value="4">
-			<label>Columns : </label><input type="text" name="Columns" value="4">
-			<button onclick="initialize(this.form); return false;">Create</button>
+			<label>Rows : </label><input type="text" name="Rows" value="" placeholder="Enter rows">
+			<label>Columns : </label><input type="text" name="Columns" value="" placeholder="Enter columns">
+			<p>
+				<button onclick="initialize(this.form); return false;">Create</button>
+				<button onclick="iterate(); return false;">Loop</button>
+				<button onclick="iterate_infinite(); return false;">Loop - Continuous</button>
+				<button onclick="iterate_infinite_fast(); return false;">Loop - Continuous Fast</button>
+				<button onclick="stop_iteration(); return false;">Stop</button>
+			</p>
 		</form>
 	</div>
-	<br>
-	<div>
+<!-- 	<div>
 		<label>Seed : </label><input type="text" name="SeedValue" value=""> (Example: [{"1":"3"},{"2":"3"}] )
 		<button onclick="seed(document.getElementsByName('SeedValue')); return false;">Execute</button>
 		<br>
-		<button onclick="iterate()">Iterate</button>
-	</div>
+	</div> -->
 	<br>
 	<div id="gametable">
 		

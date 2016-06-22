@@ -1,14 +1,36 @@
-	table, td {
-   		border: 1px solid black;
+	button{
+		border-radius: 5px;
+		font-size:15px;
+	}
+	table{
+		background-color:  white;
 	}
 
 	td {
-		padding: 10px;
+   		border: 1px solid black;
+   		border-radius: 10px;
 	}
 
+	td {
+		padding: 6px;
+	}
+
+	.head p{
+		background-color: rgba(104, 167, 0, 0.39);
+		font-size: 25px;
+		padding: 25px;
+	}
+
+	.form{
+		background-color: rgba(171, 4, 4, 0.8);
+		font-size: 20px;
+		padding: 25px;
+	}
+
+
 	.alive{
-		background-color: green;
+		background-color: white;
 	}
 	.dead{
-		background-color: red;
+		background-color: blue;
 	}
