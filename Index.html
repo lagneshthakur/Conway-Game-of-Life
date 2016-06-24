@@ -3,11 +3,12 @@
 <head>
 	<title>Conway's Game of Life</title>
 	<script type="text/javascript" src="js/jquery-3.0.0.min.js"></script>
-	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="js/angular.min.js"></script>
+	<script type="text/javascript" src="js/controller.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
 
-<body>
+<body ng-app="conway" ng-controller="gameoflifeController">
 	<div class="head">
 		<p>Conway's Game of Life - Blue is dead and White is alive</p>
 	</div>
@@ -19,21 +20,19 @@
 <!-- 				<button onclick="initialize(this.form); return false;">Create</button>
 				<button onclick="iterate_infinite(); return false;">Loop - Continuous</button>
 				<button onclick="iterate_infinite_fast(); return false;">Loop - Continuous Fast</button> -->
-				<button onclick="generateTable(); return false;">Generate Table</button>
-				<button onclick="updateTable(); return false;">Loop</button>
+				<button ng-click='generateTable()' >Generate Table</button>
+				<button ng-click='Table.MoveToNextGeneration()'>Loop</button>
 			</p>
-			<input type="text" id= "foo" name="">
-			<button onclick="tempFunc(); return false;">Binding</button>
 		</form>
 	</div>
-<!-- 	<div>
-		<label>Seed : </label><input type="text" name="SeedValue" value=""> (Example: [{"1":"3"},{"2":"3"}] )
-		<button onclick="seed(document.getElementsByName('SeedValue')); return false;">Execute</button>
-		<br>
-	</div> -->
-	<br>
 	<div id="gametable">
 		
+	</div>
+
+	<div id="modelvalues" style="display:none;">
+		{{Table.cells[0].alive}}{{Table.cells[1].alive}}{{Table.cells[2].alive}}{{Table.cells[3].alive}}
+		{{Table.cells[5].alive}}{{Table.cells[5].alive}}{{Table.cells[6].alive}}{{Table.cells[7].alive}}
+		{{Table.cells[8].alive}}{{Table.cells[9].alive}}{{Table.cells[10].alive}}
 	</div>
 </body>
 </html>
