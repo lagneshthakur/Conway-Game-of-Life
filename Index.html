@@ -9,19 +9,21 @@
 
 <body>
 	<div class="head">
-		<p>Conway's Game of Life - 0 is dead and 1 is alive</p>
+		<p>Conway's Game of Life - Blue is dead and White is alive</p>
 	</div>
 	<div class="form">
 		<form id="Initialization">
 			<label>Rows : </label><input type="text" name="Rows" value="" placeholder="Enter rows">
 			<label>Columns : </label><input type="text" name="Columns" value="" placeholder="Enter columns">
 			<p>
-				<button onclick="initialize(this.form); return false;">Create</button>
-				<button onclick="iterate(); return false;">Loop</button>
+<!-- 				<button onclick="initialize(this.form); return false;">Create</button>
 				<button onclick="iterate_infinite(); return false;">Loop - Continuous</button>
-				<button onclick="iterate_infinite_fast(); return false;">Loop - Continuous Fast</button>
-				<button onclick="stop_iteration(); return false;">Stop</button>
+				<button onclick="iterate_infinite_fast(); return false;">Loop - Continuous Fast</button> -->
+				<button onclick="generateTable(); return false;">Generate Table</button>
+				<button onclick="updateTable(); return false;">Loop</button>
 			</p>
+			<input type="text" id= "foo" name="">
+			<button onclick="tempFunc(); return false;">Binding</button>
 		</form>
 	</div>
 <!-- 	<div>
