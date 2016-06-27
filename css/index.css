@@ -2,19 +2,9 @@
 		border-radius: 5px;
 		font-size:15px;
 	}
-	table{
-		background-color:  white;
+	.cell{
+		width: 30px;
 	}
-
-	td {
-   		border: 1px solid black;
-   		border-radius: 10px;
-	}
-
-	td {
-		padding: 6px;
-	}
-
 	.head p{
 		background-color: rgba(104, 167, 0, 0.39);
 		font-size: 25px;
@@ -33,4 +23,5 @@
 	}
 	.dead{
 		background-color: blue;
+		border: 2px solid blue;
 	}

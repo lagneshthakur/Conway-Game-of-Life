@@ -1,144 +1,203 @@
 $(document).on('click', 'td', function() { 
-	if(this.innerHTML == '0'){
+	// Get the rows and columns from cell id
+	var address = this.id.split("_");
+
+	for (var i = 0; i < Table.cells.length; i++) {
+		if(Table.cells[i].address.row == address[0] && Table.cells[i].address.column == address [1] && Table.cells[i].alive == false ){
+			Table.cells[i].alive = true;
+		}
+		else if(Table.cells[i].address.row == address[0] && Table.cells[i].address.column == address [1] && Table.cells[i].alive == true ){
+			Table.cells[i].alive = false;
+		}
+	}
+
+	if(this.className == 'dead'){
 		this.setAttribute("class", "alive");
-		this.innerHTML = 1;
 	}
 	else{
 		this.setAttribute("class", "dead");
-		this.innerHTML = 0;
 	}
 });
 
+var Cell = function (isAlive, table, row, column) {
+	this.alive = isAlive;
+	this.nextGenerationIsAlive = false;
+	this.table = table;
+	this.address = {
+		row: row,
+		column: column
+	}
+} 
 
-function initialize(form)
-		{	
-			var rows = Number(form.Rows.value);
-			var columns = Number(form.Columns.value);
-			var gametable = document.getElementById("gametable");
-			gametable.innerHTML= "";
-			var table = document.createElement("TABLE");
-    		table.setAttribute("id", "myTable");
-    		gametable.appendChild(table);
-			var tr = document.createElement("TR");
-			for(var i = 1; i <= rows; i++)
-			{   table.innerHTML+= "<tr></tr>";
-				var row = document.getElementsByTagName("tr")[i-1];
-				for (var j = 1; j <= columns; j++) {
-				    var td = row.insertCell(0);
-					td.setAttribute('id',"cell_"+i+"_"+j);
-					td.innerHTML="0";
-					td.setAttribute("class", "dead");
-				}
+Cell.prototype.isDead = function() {
+	return !this.isAlive;
+};
+
+Cell.prototype.SetAlive = function(isAlive) {
+	this.alive = isAlive;
+};
+
+Cell.prototype.GetNeighbours = function() {
+	// Will return array of my neighbours, from my 'table'
+
+	cells = this.table.cells;
+	neighbours = [];
+	for (var i = 0; i < cells.length; i++) {
+		if (cells[i].address.row == this.address.row-1 && cells[i].address.column == this.address.column){
+			var neighbour_top = cells[i];
+			neighbours.push(cells[i]);
+		}
+		if (cells[i].address.row == this.address.row-1 && cells[i].address.column == this.address.column-1){
+			var neighbour_top_left = cells[i];
+			neighbours.push(cells[i]);
+		}
+		if (cells[i].address.row == this.address.row-1 && cells[i].address.column == this.address.column+1){
+			var neighbour_top_right = cells[i];
+			neighbours.push(cells[i]);
+		}
+		if (cells[i].address.row == this.address.row+1 && cells[i].address.column == this.address.column){
+			var neighbour_bottom = cells[i];
+			neighbours.push(cells[i]);
+		}
+		if (cells[i].address.row == this.address.row+1 && cells[i].address.column == this.address.column-1)	{
+			var neighbour_bottom_left = cells[i];
+			neighbours.push(cells[i]);
+		}
+		if (cells[i].address.row == this.address.row+1 && cells[i].address.column == this.address.column+1){
+			var neighbour_bottom_right = cells[i];
+			neighbours.push(cells[i]);
+		}
+		if (cells[i].address.row == this.address.row && cells[i].address.column == this.address.column-1){
+			var neighbour_left = cells[i];
+			neighbours.push(cells[i]);
+		}
+		if (cells[i].address.row == this.address.row && cells[i].address.column == this.address.column+1){
+			var neighbour_right = cells[i];
+			neighbours.push(cells[i]);
+		}
+	}
+	return neighbours;
+};
+
+Cell.prototype.PredictNextGeneration = function() {
+	// Will tell If my 'nextGeneration' should be alive or not
+
+	neighbours = this.GetNeighbours();
+	var neighbours_sum = 0;
+	for (var i = 0; i < neighbours.length; i++) {
+		if(neighbours[i].alive)
+		neighbours_sum += 1;
+	}
+	if (this.alive && neighbours_sum < 2 )
+	{
+		this.nextGenerationIsAlive = false;
+	}
+	if (this.alive && (neighbours_sum == 2 || neighbours_sum == 3) )
+	{
+		this.nextGenerationIsAlive = true;
+	}
+	if (this.alive && neighbours_sum > 3 )
+	{
+		this.nextGenerationIsAlive = false;
+	}
+	if (!(this.alive) && neighbours_sum ==  3 )
+	{
+		this.nextGenerationIsAlive = true;
+	}
+};
+
+// ---------------------
+
+var Table = {
+	cells: [],
+	Populate: function(rows, columns) {
+		for (var row = 1; row <= rows; row++) {
+			for (var column = 1; column <= columns; column++) {
+				this.cells.push(new Cell(false, this, row, column));
 			}
 		}
-
-		// No need of seed function after addind Jquery
-		// function seed(seedValue)
-		// {
-		// 	seedArray = seedValue[0].value;
-		// 	seedJSON = JSON.parse(seedArray);
-		// 	for(var i=0; i<seedJSON.length; i++){
-		// 		for(row in seedJSON[i]){
-		// 		column = seedJSON[i][row];
-		// 		var markedRow = document.getElementsByTagName("tr")[Number(row)-1];
-		// 		markedRow.children[Number(column)-1].innerHTML = "1";
-		// 		markedRow.children[Number(column)-1].setAttribute("class", "alive");
-		// 		}	
-		// 	}
-			
-		// }
-		var intervalHandle=null;
-
-		function iterate_infinite(){
-			    intervalHandle = setInterval(function(){ iterate(); }, 1000);
+		this.rows = rows;
+		this.columns = columns;
+	},
+	MoveToNextGeneration: function () {
+		for (var i = 0; i < this.cells.length; i++) {
+			this.cells[i].PredictNextGeneration();
 		}
-
-		function iterate_infinite_fast(){
-		    intervalHandle = setInterval(function(){ iterate(); }, 400);
+		for (var i = 0; i < this.cells.length; i++) {
+			this.cells[i].SetAlive(this.cells[i].nextGenerationIsAlive);
 		}
+	}
+}
 
-		function stop_iteration(){
-			clearInterval(intervalHandle);
+
+function generateTable(){
+	document.clear();
+	var gametable = document.getElementById('gametable');
+	// Clear the previous data, table already created
+	gametable.innerHTML= "";
+	Table.cells=[];
+	var form = document.getElementById('Initialization');
+	var rows = form.Rows.value;
+	var columns = form.Columns.value;
+	//Populate the 'Table' object with fresh cells.
+	Table.Populate(rows,columns);
+	
+	var tbl = document.createElement('table');
+	gametable.appendChild(tbl);
+	for (var i = 0,k=0; i < rows; i++) {
+	    var tr = document.createElement('tr');
+	    tbl.appendChild(tr);
+	// Add the IDs to <td> based on cell address
+	    for (var j = 0; j < columns; j++,k++) {
+    		var td = document.createElement('td');
+	    	var cell_value = document.createTextNode("");
+	    	td.appendChild(cell_value);
+	    	td.setAttribute("id",Table.cells[k].address.row + "_" + Table.cells[k].address.column);
+	    	td.setAttribute("class", "dead");
+	    	tr.appendChild(td);
+	    }
+	}
+}
+
+function updateTable(){
+	Table.MoveToNextGeneration();
+	var form = document.getElementById('Initialization');
+	var rows = form.Rows.value;
+	var columns = form.Columns.value;
+	for (var i = 0,k=0; i < rows; i++) {
+		for (var j = 0	; j < columns; j++,k++) {
+			td = document.getElementById((i+1)+'_'+(j+1));
+			if(Table.cells[k].alive)
+				td.setAttribute("class", "alive");
+			else
+				td.setAttribute("class", "dead");
 		}
+	}
+}
+var obj;
 
-		function iterate()
-		{
-			var tdTags = document.getElementsByTagName("td");
-			for (var i = 0; i < tdTags.length; i++)
-			{
-					var cell_id = tdTags[i].id;
-					var length = tdTags[i].id.split("_");
-					var cell_column =  length[2];
-					var cell_row = length[1];
-					var neighbour_left = document.getElementById("cell_" + Number(cell_row) + "_" + (Number(cell_column) +1) );
-					var neighbour_right = document.getElementById("cell_" + Number(cell_row) + "_" + (Number(cell_column) -1) );
-					var neighbour_top_left = document.getElementById("cell_" + (Number(cell_row)-1) + "_" + (Number(cell_column) +1) );
-					var neighbour_top_right = document.getElementById("cell_" + (Number(cell_row)-1) + "_" + (Number(cell_column) -1) );
-					var neighbour_top = document.getElementById("cell_" + (Number(cell_row)-1) + "_" + (Number(cell_column) ) );
-					var neighbour_bottom_left = document.getElementById("cell_" + (Number(cell_row)+1) + "_" + (Number(cell_column) +1) );
-					var neighbour_bottom_right = document.getElementById("cell_" + (Number(cell_row)+1) + "_" + (Number(cell_column) -1) );
-					var neighbour_bottom = document.getElementById("cell_" + (Number(cell_row)+1) + "_" + (Number(cell_column) ) );
+function tempFunc(){
 
-					if(neighbour_left){
-						neighbour_left = Number(neighbour_left.innerHTML);
-					}
-					if(neighbour_right){
-						neighbour_right = Number(neighbour_right.innerHTML);
-					}
-					if(neighbour_top_left){
-						neighbour_top_left = Number(neighbour_top_left.innerHTML);
-					}
-					if(neighbour_top_right){
-						neighbour_top_right = Number(neighbour_top_right.innerHTML);
-					}
-					if(neighbour_top){
-						neighbour_top = Number(neighbour_top.innerHTML);
-					}
-					if(neighbour_bottom_left){
-						neighbour_bottom_left = Number(neighbour_bottom_left.innerHTML);
-					}
-					if(neighbour_bottom_right){
-						neighbour_bottom_right = Number(neighbour_bottom_right.innerHTML);
-					}
-					if(neighbour_bottom){
-						neighbour_bottom = Number(neighbour_bottom.innerHTML);
-					}
+obj = new MyCtor(document.getElementById('foo'), "initial");
 
-					var neighbour_sum = neighbour_left + neighbour_right + neighbour_top_left + neighbour_top_right + neighbour_top + neighbour_bottom_left + neighbour_bottom_right + neighbour_bottom;
+function MyCtor(element, data) {
+	debugger;
+    this.data = data;
+    this.element = element;
+    element.value = data;
+    element.addEventListener("change", this);
+}
 
-					// tdTags[i].innerHTML = 1 means that the cell is currently alive and tdTags[i].innerHTML = 0 means that the cell is currently not alive
-					if (tdTags[i].innerHTML == 1 && neighbour_sum < 2 )
-					{
-						tdTags[i].setAttribute("class", "toBeDead");
-					}
-					if (tdTags[i].innerHTML == 1 && (neighbour_sum == 2 || neighbour_sum == 3) )
-					{
-						tdTags[i].setAttribute("class", "toBeAlive");
-					}
-					if (tdTags[i].innerHTML == 1 && neighbour_sum > 3 )
-					{
-						tdTags[i].setAttribute("class", "toBeDead");
-					}
-					if (tdTags[i].innerHTML == 0 && neighbour_sum ==  3 )
-					{
-						tdTags[i].setAttribute("class", "toBeAlive");
-					}
-			}
+MyCtor.prototype.handleEvent = function(event) {
+	debugger
+    switch (event.type) {
+        case "change": this.change(this.element.value);
+    }
+};
 
-			generateNextGen();	
-		}
-
-		function generateNextGen(){
-			var toBeAlive = document.getElementsByClassName("toBeAlive");
-			var toBeDead = document.getElementsByClassName("toBeDead");
-			var limit = toBeAlive.length
-			for (var i = 0; i < limit; i++){
-				toBeAlive[0].innerHTML="1";
-				toBeAlive[0].setAttribute("class", "alive");
-			}
-			limit = toBeDead.length
-			for (i = 0; i < limit; i++){
-				toBeDead[0].innerHTML="0";
-				toBeDead[0].setAttribute("class", "dead");
-			}
-		}
+MyCtor.prototype.change = function(value) {
+	debugger
+    this.data = value;
+    this.element.value = value;
+};
+};
