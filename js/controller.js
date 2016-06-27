@@ -87,6 +87,8 @@ conway.controller('gameoflifeController',function($scope,$compile){
 
 	$scope.Table = {
 		cells: [],
+		rows:0,
+		columns:0,
 		Populate: function(rows, columns) {
 			for (var row = 1; row <= rows; row++) {
 				for (var column = 1; column <= columns; column++) {
@@ -103,6 +105,29 @@ conway.controller('gameoflifeController',function($scope,$compile){
 			for (var i = 0; i < this.cells.length; i++) {
 				this.cells[i].SetAlive(this.cells[i].nextGenerationIsAlive);
 			}
+		},
+		GetRows: function()
+		{
+			rowArray = new Array(Number(this.rows));
+			for (var i = 0; i < rowArray.length; i++) {
+				rowArray[i] = i;
+			}
+			return rowArray;
+		},
+		GetColumns:function()
+		{
+			columnArray = new Array(Number(this.columns));
+			for (var i = 0; i < columnArray.length; i++) {
+				columnArray[i] = i;
+			}
+			return columnArray;
+		},
+		GetCellByRowAndColumn:function(row, column)
+		{
+			for (var i = 0; i < this.cells.length; i++) {
+				if(this.cells[i].address.row == row+1 && this.cells[i].address.column == column+1)
+					return this.cells[i];
+			}
 		}
 	};
 
@@ -110,33 +135,18 @@ conway.controller('gameoflifeController',function($scope,$compile){
 	$scope.generateTable = function (){
 		var gametable = document.getElementById('gametable');
 		// Clear the previous data, table already created
-		gametable.innerHTML= "";
 		$scope.Table.cells=[];
 		var form = document.getElementById('Initialization');
 		var rows = form.Rows.value;
 		var columns = form.Columns.value;
 		//Populate the '$scope.Table' object with fresh cells.
 		$scope.Table.Populate(rows,columns);
-		for (var i = 0,k=0; i < rows; i++) {
-		   	var div = document.createElement('div');
-		   	gametable.appendChild(div);
-			// Bind the inputs to Object values
-		    for (var j = 0; j < columns; j++,k++) {
-				var textinput = document.createElement('input');
-			    textinput.type = "checkbox";
-			    textinput.name="cell";
-		    	textinput.setAttribute("id",$scope.Table.cells[k].address.row + "_" + $scope.Table.cells[k].address.column);
-		    	textinput.setAttribute("ng-model","Table.cells["+k+"].alive");
-		    	textinput.setAttribute("class", "cell");
-		    	$compile(textinput)($scope);
-		    	div.appendChild(textinput);
-		    }
-		}
 	};
-});
 
-
-$(document).on('click', 'input[name = "cell"]', function() {
-	this.value="true";
-	$('input').trigger("change");
+	$scope.changestate = function(cell){
+		if(cell.alive == true)
+			cell.alive = false;
+		else
+			cell.alive = true;
+	}
 });

@@ -4,6 +4,9 @@
 	}
 	.cell{
 		width: 30px;
+		height: 30px;
+		border-radius: 10px;
+		border-color: blue;
 	}
 	.head p{
 		background-color: rgba(104, 167, 0, 0.39);
@@ -20,8 +23,9 @@
 
 	.alive{
 		background-color: white;
+		border: 2px solid;
 	}
 	.dead{
-		background-color: blue;
-		border: 2px solid blue;
+		background-color: lightgreen;
+		border: 2px solid;
 	}

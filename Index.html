@@ -26,7 +26,16 @@
 		</form>
 	</div>
 	<div id="gametable">
-		
+		<table>
+			<tr ng-repeat="row in Table.GetRows()">
+				<td ng-repeat="column in Table.GetColumns()" ng-init="cell = Table.GetCellByRowAndColumn(row,column)">
+					<span ng-click="changestate(cell)">
+						<div ng-if="cell.alive" class="alive cell"></div>
+						<div ng-if="!cell.alive" class="dead cell"></div>
+					</span>
+				</td>
+			</tr>
+		</table>
 	</div>
 
 	<div id="modelvalues" style="display:none;">
